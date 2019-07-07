@@ -1,0 +1,752 @@
+`timescale 1ns / 1ps
+module top(
+	input clk,
+	input ctrl,
+	input clk_wire,
+	output clk_out,
+	output Y1,
+	output Y2
+	);
+	
+	wire A;
+	wire B;
+	
+	clock i1( 
+		.clk (clk),
+		.ctrl (ctrl),
+		.clk_out (clk_out)
+		);
+	SPWM sp1(
+		.clk (clk_wire),
+		.Y (A)
+		);
+	SPWM sp2(
+	    .clk (clk_wire),
+		.Y (B)
+		);
+	muxout m3(
+		.inA (A),
+		.inB (B),
+		.clk (clk_wire),
+		.outA (Y1),
+		.outB (Y2)
+		);
+		
+endmodule
+	
+module clk_2M(
+  input clk,
+  output clk_out
+);
+  
+  reg [2:0] counter =0;
+  always @ (posedge clk)
+    begin
+      if (counter <=4)
+        counter = counter +1;
+      else
+        counter = 0;
+    end
+  assign clk_out = (counter <=2) ? 1:0;
+endmodule
+
+  module clock(
+  input clk,
+  input ctrl,
+  output clk_out
+  
+);
+  wire buffer;
+  
+  clk_2M clk1(
+    .clk (clk),
+    .clk_out (buffer)
+  );
+  
+  bufif1 b1(clk_out,buffer,ctrl);
+  
+endmodule 
+
+module count1(
+  input clk,
+  input up_dn,
+  output [4:0] y
+);
+  wire out_to_sig;
+  
+  up_down up1(
+    .clk (clk),
+    .sig (out_to_sig),
+    .up_dn (up_dn),
+    .y (y)
+  );
+  
+  INPUT i2(
+    .clk (clk),
+    .out (out_to_sig)
+  );
+  
+endmodule 
+
+module up_down(
+  input clk,
+  input sig,
+  input up_dn,
+  output [4:0] y
+);
+  reg [4:0] counter =0;
+  
+  always @ (negedge sig) 
+    begin
+      if (up_dn ==1)
+        begin
+          counter <= counter +1; //make sure 2 clock cycles less?
+        end
+      if (up_dn ==0)
+        begin
+          counter <= counter -1;
+        end
+    end
+  assign y = counter;
+endmodule
+
+module INPUT(
+  input clk,
+  output out
+);
+  reg [6:0] counter =0;
+  
+  always @ (posedge clk)
+    begin
+      if (counter <=99)
+        counter <= counter +1;
+      else 
+        counter <=0;
+    end
+  assign out = (counter <50) ? 1:0;
+endmodule
+	
+	
+	
+module mux1(
+	input a,
+	input b,
+	input c,
+	input d,
+	input e,
+	input f,
+	input g,
+	input h,
+	input i,
+	input j,
+	input k,
+	input l,
+	input m,
+	input n,
+	input o,
+	input p,
+	input q,
+	input r,
+	input [4:0] sel1,
+	output reg y
+	);
+	always @ (a or b or c or d or e or f or g or h or i or j or k or l or m or n or o or p or q or r or sel1)
+		begin
+			case(sel1)
+				1 : y <= a;
+				2 : y <= b;
+				3 : y <= c;
+				4 : y <= d;
+				5 : y <= e;
+				6 : y <= f;
+				7 : y <= g;
+				8 : y <= h;
+				9 : y <= i;
+				10 : y <= j;
+				11 : y <= k;
+				12 : y <= l;
+				13 : y <= m;
+				14 : y <= n;
+				15 : y <= o;
+				16 : y <= p;
+				17 : y <= q;
+				18 : y <= r;
+				0 : y <= 0;
+			endcase
+		end
+endmodule 
+
+module muxo(
+  input A,
+  input B,
+  input select,
+  output reg outA,
+  output reg outB
+);
+  always @ (A or B or select)
+    begin 
+      case(select)
+        1 : outA <= A;
+        0 : outA <= 0;
+      endcase 
+      case(select)
+        1 : outB <= 0;
+        0 : outB <= B;
+      endcase
+    end
+endmodule 
+
+module muxout(
+  input inA,
+  input inB,
+  input clk,
+  input select,
+  output outA,
+  output outB
+);
+  wire select_wire;
+  
+  muxo m2(
+    .A (inA),
+    .B (inB),
+    .select (select_wire),
+    .outA (outA),
+    .outB (outB)
+  );
+  
+  SELA s1(
+    .clk (clk),
+    .select (select_wire)
+  );
+  
+endmodule 
+	
+
+module PWM1(
+	input clk,
+	output out1
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out1 = (counter <10) ? 1:0;
+	
+endmodule
+
+
+module PWM2(
+	input clk,
+	output out2
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out2 = (counter <18) ? 1:0;
+	
+endmodule
+
+
+
+module PWM3(
+	input clk,
+	output out3
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out3 = (counter <27) ? 1:0;
+	
+endmodule
+
+
+
+module PWM4(
+	input clk,
+	output out4
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out4 = (counter <35) ? 1:0;
+	
+endmodule
+
+
+
+module PWM5(
+	input clk,
+	output out5
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out5 = (counter <43) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM6(
+	input clk,
+	output out6
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out6 = (counter <51) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM7(
+	input clk,
+	output out7
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out7 = (counter <58) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM8(
+	input clk,
+	output out8
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+    assign out8 = (counter <65) ? 1:0; 
+	
+endmodule
+
+
+module PWM9(
+	input clk,
+	output out9
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out9 = (counter <72) ? 1:0; 
+	 
+endmodule
+
+module PWM10(
+	input clk,
+	output out10
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out10 = (counter <78) ? 1:0;
+	
+endmodule
+
+
+module PWM11(
+	input clk,
+	output out11
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out11 = (counter <83) ? 1:0;
+	
+endmodule
+
+
+
+module PWM12(
+	input clk,
+	output out12
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out12 = (counter <88) ? 1:0;
+	
+endmodule
+
+
+
+module PWM13(
+	input clk,
+	output out13
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out13 = (counter <91) ? 1:0;
+	
+endmodule
+
+
+
+module PWM14(
+	input clk,
+	output out14
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out14 = (counter <94) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM15(
+	input clk,
+	output out15
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out15 = (counter <97) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM16(
+	input clk,
+	output out16
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out16 = (counter <98) ? 1:0; 
+	
+endmodule
+
+
+
+module PWM17(
+	input clk,
+	output out17
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+    assign out17 = (counter <99) ? 1:0; 
+	
+endmodule
+
+
+module PWM18(
+	input clk,
+	output out18
+	);
+	reg [6:0] counter =0;
+	
+	always @ (posedge clk) 
+		begin
+			if (counter <100)
+				counter <= counter +1;
+			else
+				counter <= 0;
+		end
+	assign out18 = (counter <100) ? 1:0; 
+	 
+endmodule
+
+module SELA(
+  input clk,
+  output select
+);
+  reg [12:0] counter =0;
+  always @ (posedge clk)
+    begin 
+      if (counter <7271)
+        counter <= counter +1;
+      else 
+        counter <= 0;
+    end
+  assign select = (counter <3635) ? 1:0;
+endmodule 
+
+
+module select1(
+  input clk,
+  output [4:0] selout
+);
+  wire uds_cnt;
+  
+  up_dn_select u1(
+    .clk (clk),
+    .y (uds_cnt)
+  );
+  
+  count1 c1(
+    .up_dn (uds_cnt),
+    .clk (clk),
+    .y (selout)
+  );
+endmodule
+
+module SPWM(
+	input clk, 
+	output Y
+	);
+	
+	wire a_1;
+	wire b_2;
+	wire c_3;
+	wire d_4;
+	wire e_5;
+	wire f_6;
+	wire g_7;
+	wire h_8;
+	wire i_9;
+	wire j_10;
+	wire k_11;
+	wire l_12;
+	wire m_13;
+	wire n_14;
+	wire o_15;
+	wire p_16;
+	wire q_17;
+	wire r_18;
+	wire [4:0] c_sel1;
+	
+  PWM1 P1_1(
+	.clk (clk),
+	.out1 (a_1)
+	);
+	
+  PWM2 P2_1( 
+	.clk (clk),
+	.out2 (b_2)
+	);
+	
+  PWM3 P3_1(
+	.clk (clk),
+	.out3 (c_3)
+	);
+	
+  PWM4 P4_1(
+	.clk (clk),
+	.out4 (d_4)
+	);
+	
+  PWM5 P5_1(
+	.clk (clk),
+	.out5 (e_5)
+	);
+
+  PWM6 P6_1(
+	.clk (clk),
+	.out6 (f_6)
+	);
+
+  PWM7 P7_1(
+	.clk (clk),
+	.out7 (g_7)
+	);
+	
+  PWM8 P8_1(
+	.clk (clk),
+	.out8 (h_8)
+	);
+
+  PWM9 P9_1(
+	.clk (clk),
+	.out9 (i_9)
+	);
+	
+  PWM10 P10_1(
+	.clk (clk),
+	.out10 (j_10)
+	);
+	
+  PWM11 P11_1( 
+	.clk (clk),
+	.out11 (k_11)
+	);
+	
+  PWM12 P12_1(
+	.clk (clk),
+	.out12 (l_12)
+	);
+	
+  PWM13 P13_1(
+	.clk (clk),
+	.out13 (m_13)
+	);
+	
+  PWM14 P14_1(
+	.clk (clk),
+	.out14 (n_14)
+	);
+
+  PWM15 P15_1(
+	.clk (clk),
+	.out15 (o_15)
+	);
+
+  PWM16 P16_1(
+	.clk (clk),
+	.out16 (p_16)
+	);
+	
+  PWM17 P17_1(
+	.clk (clk),
+	.out17 (q_17)
+	);
+
+  PWM18 P18_1(
+	.clk (clk),
+	.out18 (r_18)
+	);
+	
+  mux1 m1(
+	.a (a_1),
+	.b (b_2),
+	.c (c_3),
+	.d (d_4),
+	.e (e_5),
+	.f (f_6),
+	.g (g_7),
+	.h (h_8),
+	.i (i_9),
+	.j (j_10),
+	.k (k_11),
+	.l (l_12),
+	.m (m_13),
+	.n (n_14),
+	.o (o_15),
+	.p (p_16),
+	.q (q_17),
+	.r (r_18),
+	.sel1 (c_sel1),
+	.y (Y)
+	);
+
+  select1 s1(
+	.clk (clk),
+	.selout (c_sel1)
+	);
+	
+endmodule
+	
+module up_dn_select(
+	input clk,
+	output y
+	);
+	reg [11:0] counter =0;
+	always @ (posedge clk) 
+		begin 
+			if (counter <3635)
+				counter <= counter +1;
+			else 
+				counter <= 0;
+		end
+	assign y = (counter <1818) ? 1:0;
+endmodule 
+
