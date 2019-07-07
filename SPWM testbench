@@ -1,0 +1,23 @@
+`default_nettype none
+`timescale 1ns / 1ns
+
+module tb;
+  reg clk,ctrl,clk_wire;
+  wire clk_out,Y1,Y2;
+  
+  top uut(clk,ctrl,clk_wire,clk_out,Y1,Y2);
+  
+  always #41.66666666667 clk = ~clk;
+  always #500 clk_wire = ~clk_wire;
+  
+  initial 
+    begin 
+      $dumpfile("dump.vcd");
+      $dumpvars(0,uut);
+      clk=0;
+      ctrl=1;
+	  clk_wire=1;
+    #100000000000
+      $finish;
+    end
+endmodule
